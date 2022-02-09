@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"os"
@@ -15,11 +16,21 @@ var (
 )
 
 func init() {
-	flag.StringVar(&token, "t", "OTQwNjkyNjE5ODcxMjg5MzY0.YgLGRQ.EPUVcGPUEBIvv-kx0eHDmhgtVCU", "Bot Token")
+	flag.StringVar(&token, "t", "", "Bot Token")
 	flag.Parse()
 }
 
 func main() {
+	//Gets token from file
+	if token == "" {
+		authF, err := os.Open("auth.txt")
+		if err != nil {
+			panic("Error opening file auth.txt: " + err.Error())
+		}
+		authBuf := bufio.NewScanner(authF)
+		authBuf.Scan()
+		token = authBuf.Text()
+	}
 	//Create discord session for bot with token
 	dg, err := discordgo.New("Bot " + token)
 	if err != nil {
